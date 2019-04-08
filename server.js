@@ -22,6 +22,13 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use('/public', express.static(process.cwd() + '/public'));
 
+let urlSchema  = mongoose.Schema({
+  original_url: String,
+  short_url_id: String
+});
+
+let Url = mongoose.model('Url', urlSchema);
+
 app.get('/', function(req, res){
   res.sendFile(process.cwd() + '/views/index.html');
 });
@@ -32,15 +39,19 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-app.post('/api/shorturl/new', asyncfunction(req, res){
+app.post('/api/shorturl/new', async function(req, res){
   try{
     let {host} = new URL(req.body.url);
-    console.log(host)
     dns.lookup(host, function(err, family, address){
       if(err){
-        throw  Error('Invalid Url');
+        return res.json({
+          error: 'Invalid Url'
+        })
       };
     });
+    let url = await Url.create(req.body.url);
+    url.short_url_id = u
+    
     return res.json({
       "original_url":req.body.url,
       "short_url":1
