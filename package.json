@@ -1,6 +1,6 @@
 {
-  "name": "shorturl",
-  "version": "0.0.1",
+  "name": "url-shortener",
+  "version": "0.1.0",
   "description": "API project for freeCodeCamp",
   "main": "server.js",
   "scripts": {
@@ -27,5 +27,5 @@
   ],
   "license": "MIT",
   "devDependencies": {},
-  "author": ""
+  "author": "'Gouri Shankar Kumawat <gskumawat555@gmail.com>"
 }
