@@ -34,13 +34,16 @@ app.get("/api/hello", function (req, res) {
 
 app.post('/api/shorturl/new', async function(req, res){
   try{
-    let {host} = await new URL(req.body.url);
+    let {host} = new URL(req.body.url);
     dns.lookup(host, function(err, family, address){
       if(err){
-        throw  Error('Invalid Url');
+        throw new Error('Invalid Url');
       };
     });
-    res.redirect('/');
+    res.json({
+      "original_url":req.body.url,
+      "short_url":1
+    })
   }
   catch(err){
     return res.json({
