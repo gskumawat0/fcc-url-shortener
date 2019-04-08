@@ -5,7 +5,7 @@ var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var cors = require('cors');
-
+const dns = require('dns');
 var app = express();
 
 // Basic Configuration 
@@ -34,9 +34,14 @@ app.get("/api/hello", function (req, res) {
 
 app.post('/api/shorturl/new', async function(req, res){
   try{
-  let ho = req.body.url;
-  let isValidUrl = await dns.lookup(url)
-  res.redirect('/');
+    let {host} = await new URL(req.body.url);
+    dns.lookup(host,function(err, family, address){
+      if(err){
+        throw Error('Invalid Url');
+      };
+      console.log(family, address)
+    });
+    res.redirect('/');
   }
   catch(err){
     return res.json({
