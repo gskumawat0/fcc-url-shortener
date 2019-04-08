@@ -33,10 +33,17 @@ app.get("/api/hello", function (req, res) {
 });
 
 app.post('/api/shorturl/new', async function(req, res){
-  console.log(req);
+  try{
+  console.log(req.headers,77);
   let url = req.body.url;
   let isValidUrl = await dns.lookup(url)
   res.redirect('/');
+  }
+  catch(err){
+    return res.json({
+      error: err.message
+    })
+  }
 })
 
 
