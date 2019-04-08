@@ -13,6 +13,9 @@ var port = process.env.PORT || 3000;
 
 /** this project needs a db !! **/ 
 // mongoose.connect(process.env.MONGOLAB_URI);
+mongoose.connect(process.env.MONGO_URI,{ useNewUrlParser: true })
+  .then(()=>console.log('database connected'))
+  .catch((err)=>console.log(err.message));
 
 app.use(cors());
 
@@ -49,12 +52,13 @@ app.post('/api/shorturl/new', async function(req, res){
         })
       };
     });
-    let url = await Url.create(req.body.url);
-    url.short_url_id = u
+    let url = await Url.create({original_url : req.body.url});
+    url.short_url_id = url._id.toString().slice(-6);
+    url.save()
     
     return res.json({
-      "original_url":req.body.url,
-      "short_url":1
+      "original_url":url.original_url,
+      "short_url":`host/shorturl/${url.short_url_id}`
     })
   }
   catch(err){
@@ -64,6 +68,17 @@ app.post('/api/shorturl/new', async function(req, res){
   }
 })
 
+app.get('/shorturl/:shortUrlId', async function(req, res){
+  try{
+    let url = await Url.findOne({short_url_id: req.params.shortUrlId});
+    res.redirect(url.original_url);    
+  }
+  catch(err){
+    return res.json({
+      error: err.message
+    })
+  }
+})
 
 app.listen(port, function () {
   console.log('Node.js listening ...');
